@@ -53,7 +53,7 @@ async def forward_to_agent(agent_id: str, payload: RequestPayload) -> RequestRes
                 f"{agent.url}/process", 
                 content=task_envelope.json(), 
                 headers={"Content-Type": "application/json"},
-                timeout=15.0
+                timeout=45.0
             )
             response.raise_for_status()
             
