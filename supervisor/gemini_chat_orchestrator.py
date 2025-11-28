@@ -268,6 +268,13 @@ Now analyze the user's message and respond with ONLY the JSON object (no preambl
 - Optional: Any parameters to pass through
 - Example: "What is photosynthesis?"
 → Extracted: {} (will just forward the query)
+
+### Concept Reinforcement Agent
+- Required: weak_topics (list of topics to reinforce)
+- Optional: learning_style (visual/auditory/reading/kinesthetic), max_tasks
+- Example: "Help me practice my weak areas in Python loops and functions"
+→ Extracted: {weak_topics: ["Python loops", "Python functions"], learning_style: "visual"}
+- Keywords: weak topics, practice, reinforce, struggle with, need help with, practice concepts
 """
         return definitions
 
@@ -567,6 +574,8 @@ Now analyze the user's message and respond with ONLY the JSON object (no preambl
             return self._format_for_plagiarism_agent(base_payload, extracted_params)
         elif agent_id == "gemini_wrapper_agent":
             return self._format_for_gemini_wrapper(base_payload, extracted_params)
+        elif agent_id == "concept_reinforcement_agent":
+            return self._format_for_concept_reinforcement(base_payload, extracted_params)
         else:
             # Fallback: just include extracted params
             _logger.warning(f"Unknown agent {agent_id}, using generic format")
@@ -655,6 +664,30 @@ Now analyze the user's message and respond with ONLY the JSON object (no preambl
         # Just pass through any additional params
         payload.update(params)
         return payload
+
+    def _format_for_concept_reinforcement(self, payload: Dict, params: Dict) -> Dict:
+        """Format for Concept Reinforcement Agent - expects agent_name, intent, payload structure."""
+        # Extract weak topics - could be a list or a single topic
+        weak_topics = params.get("weak_topics") or params.get("topics") or []
+        if isinstance(weak_topics, str):
+            weak_topics = [weak_topics]
+        
+        # If topic is provided but not weak_topics, use topic as weak_topics
+        if not weak_topics and params.get("topic"):
+            weak_topics = [params.get("topic")]
+        
+        return {
+            "agent_name": "concept_reinforcement_agent",
+            "intent": "generate_reinforcement_tasks",
+            "payload": {
+                "student_id": params.get("student_id") or params.get("user_id") or "default_student",
+                "weak_topics": weak_topics,
+                "preferences": {
+                    "learning_style": params.get("learning_style") or "visual",
+                    "max_tasks": int(params.get("max_tasks") or 3)
+                }
+            }
+        }
 
     def reset_conversation(self):
         """Reset conversation state (for new user or new conversation)."""

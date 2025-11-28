@@ -150,6 +150,9 @@
       "review",
       "weak topics"
     ],
+    "required_params": [
+      "weak_topics"
+    ],
     "status": "healthy"
   },
   {

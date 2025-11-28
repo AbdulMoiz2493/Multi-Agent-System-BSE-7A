@@ -138,6 +138,7 @@ Respond with ONLY a JSON object in this EXACT format (no markdown, no backticks)
    - REQUIRED params by agent:
      * adaptive_quiz_master_agent: REQUIRES "topic" (what subject to quiz on)
      * research_scout_agent: REQUIRES "topic" (what to research)
+     * concept_reinforcement_agent: REQUIRES "weak_topics" (what topics to practice/reinforce)
      * plagiarism_prevention_agent: REQUIRES text content
      * gemini-wrapper: No required params
 
@@ -156,6 +157,7 @@ Respond with ONLY a JSON object in this EXACT format (no markdown, no backticks)
    - Ask SPECIFIC questions about missing REQUIRED parameters
    - For quiz without topic: "What topic would you like to be quizzed on? (e.g., Python, Math, History)"
    - For research without topic: "What topic would you like me to research?"
+   - For concept reinforcement without weak_topics: "What topics are you struggling with and need extra practice on?"
    - NEVER ask generic questions like "What do you need help with?"
 
 6. **Parameter Extraction**:
