@@ -1,0 +1,31 @@
+### Test request from Supervisor to Proctor AI agent via Supervisor API
+
+POST http://localhost:8000/api/supervisor/request
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiZXhwIjoxNzY0MjYyMjUyfQ.KMBn1IZhck6oP7FL-Yf3lPsqm-vDiGCw70cdHO6yefU
+
+{
+  "agentId": "proctor-ai",
+  "request": {
+    "student_id": "1",
+    "profile": {"name": "John Doe", "grade": "10"},
+    "study_schedule": {
+      "preferred_times": ["09:00", "14:00", "19:00"],
+      "daily_goal_hours": 3.5
+    },
+    "activity_log": [
+      {"date": "2025-11-15", "subject": "Mathematics", "hours": 2.5, "status": "completed"},
+      {"date": "2025-11-16", "subject": "Physics", "hours": 1.5, "status": "completed"}
+    ],
+    "user_feedback": {
+      "reminder_effectiveness": 4,
+      "motivation_level": "high"
+    },
+    "context": {
+      "request_type": "weekly_analysis",
+      "supervisor_id": "supervisor_001",
+      "priority": "normal"
+    }
+  },
+  "priority": 1
+}

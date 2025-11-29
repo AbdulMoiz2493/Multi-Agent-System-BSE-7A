@@ -55,6 +55,39 @@ async def forward_to_agent(agent_id: str, payload: RequestPayload, agent_specifi
             )
         _logger.info(f"Agent {agent_id} is now healthy. Proceeding with request.")
 
+    # Custom routing for proctor-ai agent (additive, does not remove any logic)
+    if agent.id == "proctor-ai":
+        start_time = time.time()
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.post(
+                    f"{agent.url}/api/supervisor/analyze",
+                    content=payload.model_dump_json(),
+                    headers={"Content-Type": "application/json"},
+                    timeout=15.0
+                )
+                response.raise_for_status()
+                result = response.json()
+                execution_time = (time.time() - start_time) * 1000
+                response_dict = {
+                    "response": result,
+                    "agentId": agent.id,
+                    "timestamp": datetime.utcnow(),
+                    "metadata": {
+                        "executionTime": execution_time,
+                        "agentTrace": [agent.id],
+                        "participatingAgents": [agent.id],
+                        "cached": False
+                    }
+                }
+                return RequestResponse.model_validate(response_dict)
+        except Exception as e:
+            _logger.exception(f"Error calling proctor-ai /api/supervisor/analyze: {e}")
+            return RequestResponse(
+                error=ErrorInfo(code="AGENT_ERROR", message=str(e))
+            )
+
+    # Default/original logic for all other agents
     # Build task parameters - if agent_specific is provided with the required
     # agent format (agent_name, intent, payload), use it directly.
     # Otherwise, merge with RequestPayload fields for backward compatibility.

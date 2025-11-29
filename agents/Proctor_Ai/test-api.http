@@ -1,0 +1,263 @@
+### SPM Project Backend API Tests
+### Base URL: https://special-space-goggles-wrvpwxrg99rqcv6jg-8080.app.github.dev
+
+### Variables
+@baseUrl = http://localhost:8080
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzdW1haXJAZ21haWwuY29tIiwiZXhwIjoxNzY0MjU1OTg5fQ.shjGwXIrU1JL8tHMdcJ4qShEtTpug02LtohYaA-NINA
+
+### ==========================================
+### Health Check (No Auth Required)
+### ==========================================
+
+### Health Check
+GET {{baseUrl}}/health
+
+### Root Endpoint
+GET {{baseUrl}}/
+
+### ==========================================
+### Authentication
+### ==========================================
+
+### Register New User
+
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "sumair@gmail.com",
+  "password": "1111",
+  "full_name": "Sumair Test"
+}
+
+### Login
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "sumair@gmail.com",
+  "password": "1111"
+}
+
+### Refresh Token
+POST {{baseUrl}}/api/auth/refresh
+Authorization: Bearer {{token}}
+
+### Get Current User Info
+GET {{baseUrl}}/api/auth/me
+Authorization: Bearer {{token}}
+
+### ==========================================
+### Study Sessions
+### ==========================================
+
+### Create Study Session
+POST {{baseUrl}}/api/sessions
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "course_name": "Mathematics",
+  "duration_minutes": 60,
+  "session_date": "2024-11-25T14:00:00Z",
+  "notes": "Completed calculus problems"
+}
+
+### List All Sessions
+GET {{baseUrl}}/api/sessions?page=1&page_size=10
+Authorization: Bearer {{token}}
+
+### List Sessions with Filter
+GET {{baseUrl}}/api/sessions?page=1&page_size=100&course_name=Mathematics
+Authorization: Bearer {{token}}
+
+### Get Single Session (change ID as needed)
+GET {{baseUrl}}/api/sessions/1
+Authorization: Bearer {{token}}
+
+### Update Session
+PUT {{baseUrl}}/api/sessions/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "course_name": "Advanced Mathematics",
+  "duration_minutes": 75,
+  "notes": "Updated notes"
+}
+
+### Delete Session
+DELETE {{baseUrl}}/api/sessions/1
+Authorization: Bearer {{token}}
+
+### ==========================================
+### AI & Insights
+### ==========================================
+
+### Generate Insights
+POST {{baseUrl}}/api/ai/generate-insights
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "force_regenerate": false
+}
+
+### Get Previous Insights
+GET {{baseUrl}}/api/ai/insights?limit=10
+Authorization: Bearer {{token}}
+
+### Analyze Study Patterns
+GET {{baseUrl}}/api/ai/study-patterns?days=1
+Authorization: Bearer {{token}}
+
+### Create Reminder Schedule
+POST {{baseUrl}}/api/ai/reminder-schedule
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "days_ahead": 7,
+  "preferred_times": ["19:00", "21:00"]
+}
+
+### Get Optimal Study Times
+GET {{baseUrl}}/api/ai/optimal-study-times
+Authorization: Bearer {{token}}
+
+### Get Neglected Subjects
+GET {{baseUrl}}/api/ai/neglected-subjects?days=7
+Authorization: Bearer {{token}}
+
+### Should Study Now
+GET {{baseUrl}}/api/ai/should-study-now
+Authorization: Bearer {{token}}
+
+### Get Study Recommendations
+GET {{baseUrl}}/api/ai/study-recommendations
+Authorization: Bearer {{token}}
+
+### ==========================================
+### Chatbot Integration
+### ==========================================
+
+### Log Study via Chatbot
+POST {{baseUrl}}/api/chatbot/log-study
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "course_name": "Physics",
+  "duration_minutes": 45,
+  "session_date": "2024-11-25T16:00:00Z",
+  "notes": "Studied via chatbot"
+}
+
+### Get Chatbot Status
+GET {{baseUrl}}/api/chatbot/status
+Authorization: Bearer {{token}}
+
+### Trigger Reminder
+POST {{baseUrl}}/api/chatbot/trigger-reminder
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "subject": "Mathematics",
+  "custom_message": "Don't forget to study!"
+}
+
+### Get Chatbot Insights
+GET {{baseUrl}}/api/chatbot/insights
+Authorization: Bearer {{token}}
+
+### Get Activity Summary
+GET {{baseUrl}}/api/chatbot/activity-summary?days=7
+Authorization: Bearer {{token}}
+
+### ==========================================
+### Analytics
+### ==========================================
+
+### Get User Progress
+GET {{baseUrl}}/api/analytics/user-progress?days=30
+Authorization: Bearer {{token}}
+
+### Get Consistency Trends
+GET {{baseUrl}}/api/analytics/consistency?days=30
+Authorization: Bearer {{token}}
+
+### Get Insights Data
+GET {{baseUrl}}/api/analytics/insights-data
+Authorization: Bearer {{token}}
+
+### ==========================================
+### Reminders
+### ==========================================
+
+### Log Reminder
+POST {{baseUrl}}/api/reminders/log
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "user_id": 1,
+  "scheduled_time": "2024-11-25T19:00:00Z",
+  "message": "Time to study!",
+  "status": "SENT"
+}
+
+### Get Reminder Status
+GET {{baseUrl}}/api/reminders/status
+Authorization: Bearer {{token}}
+
+### ==========================================
+### User Profile
+### ==========================================
+
+### Get User Profile
+GET {{baseUrl}}/api/users/me
+Authorization: Bearer {{token}}
+
+### Update User Profile
+PUT {{baseUrl}}/api/users/me
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "email": "sumair@gmail.com",
+  "full_name": "Sumair Updated"
+}
+
+### Get User Reminder Data
+GET {{baseUrl}}/api/users/1/reminder-data
+Authorization: Bearer {{token}}
+
+### ==========================================
+### Supervisor (No Auth Required)
+### ==========================================
+
+### Analyze Student
+POST {{baseUrl}}/api/supervisor/analyze
+Content-Type: application/json
+
+{
+  "student_id": "STU_2709",
+  "activity_log": [
+    {
+      "date": "2024-11-24",
+      "subject": "Mathematics",
+      "status": "completed",
+      "duration_minutes": 60
+    }
+  ],
+  "study_schedule": {
+    "preferred_times": ["19:00", "21:00"]
+  }
+}
+
+### Get Student Trends
+GET {{baseUrl}}/api/supervisor/student-trends/STU_2709?days=30
+
+### Get Engagement Metrics
+GET {{baseUrl}}/api/supervisor/engagement-metrics/STU_2709

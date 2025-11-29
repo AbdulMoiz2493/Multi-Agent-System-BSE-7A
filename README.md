@@ -121,3 +121,11 @@ curl -X POST http://127.0.0.1:8000/api/supervisor/request \
 ```
 
 You should receive a `RequestResponse` from the `gemini-wrapper` agent. In `mock` mode, the response will be a templated message. In `cloud` mode, it will be the output from the configured LLM.
+
+
+
+
+## commands 
+venv\Scripts\activate
+python -m uvicorn supervisor.main:app --host 0.0.0.0 --port 8000 --reload
+

@@ -1,0 +1,43 @@
+### Test Supervisor Agent (AI) Endpoint
+
+@baseUrl = http://localhost:8080/api
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzdW1haXJAZ21haWwuY29tIiwiZXhwIjoxNzY0MjU1OTg5fQ.shjGwXIrU1JL8tHMdcJ4qShEtTpug02LtohYaA-NINA
+
+### Supervisor Agent Analysis (minimal fields, just names)
+POST {{baseUrl}}/supervisor/analyze
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "student_id": "STU_1",
+  "profile": {"name": "Test User", "grade": "10"},
+  "study_schedule": {
+    "preferred_times": ["09:00"],
+    "daily_goal_hours": 1
+  },
+  "activity_log": [
+    {
+      "date": "2025-11-27",
+      "subject": "Math",
+      "hours": 1,
+      "status": "completed"
+    }
+  ],
+  "user_feedback": {
+    "reminder_effectiveness": 3,
+    "motivation_level": "medium"
+  },
+  "context": {
+    "request_type": "test",
+    "supervisor_id": "sup_1",
+    "priority": "normal"
+  }
+}
+
+### Test Proctor AI supervisor/analyze endpoint directly
+POST http://localhost:8080/api/supervisor/analyze
+Content-Type: application/json
+
+{
+  "student_id": "STU_1234"
+}

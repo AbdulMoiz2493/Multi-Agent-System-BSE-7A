@@ -1,0 +1,19 @@
+### 1. Login to Supervisor and get token
+POST http://localhost:8000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "password"
+}
+
+### 2. Use the token from the above response in the Authorization header below
+POST http://localhost:8000/api/supervisor/request
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiZXhwIjoxNzY0MjYyMjUyfQ.KMBn1IZhck6oP7FL-Yf3lPsqm-vDiGCw70cdHO6yefU
+
+{
+  "agentId": "proctor-ai",
+  "request": "{\"student_id\": \"STU_1234\"}",
+  "priority": 1
+}
