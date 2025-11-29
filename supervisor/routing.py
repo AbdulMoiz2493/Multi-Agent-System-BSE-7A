@@ -355,6 +355,21 @@ def build_agent_payload(agent_id: str, user_request: str, intent_info: Dict[str,
             "export_pdf": extracted.get("export_pdf", False)
         }
 
+    elif agent_id in ("assignment_coach_agent", "assignment-coach-agent", "assignment_coach"):
+        # assignment_coach expects task_description and optional subject
+        task_description = extracted.get("task_description") or extracted.get("assignment") or user_request
+        subject = extracted.get("subject") or extracted.get("topic") or ""
+        
+        # Build the request message with subject context if provided
+        if subject:
+            request_message = f"[Subject: {subject}] {task_description}"
+        else:
+            request_message = task_description
+        
+        payload = {
+            "request": request_message
+        }
+
     else:
         # Generic fallback: include extracted params under `params`
         if extracted:

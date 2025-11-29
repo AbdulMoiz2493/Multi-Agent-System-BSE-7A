@@ -1,18 +1,22 @@
-bcrypt>=4.0.1
-passlib[bcrypt]==1.7.4
-chromadb>=0.5.0
+# Assignment Coach Agent - Minimal Requirements
+# Core web framework
 fastapi
 uvicorn
 pydantic
-python-jose[cryptography]
-pyjwt
-httpx
-PyYAML
-pytest
-requests
-aiosqlite
+
+# LLM
 google-generativeai
-dotenv
+
+# LangGraph for workflow
 langgraph>=0.0.20
 langchain-core>=0.1.0
-numpy>=2.0.0
+
+# ChromaDB for long-term memory (uses built-in ONNX embeddings)
+# Note: This is heavy but required for LTM functionality
+chromadb>=0.5.0
+
+# Environment loading
+python-dotenv
+
+# HTTP client (if needed)
+httpx

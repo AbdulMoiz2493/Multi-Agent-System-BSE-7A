@@ -4,8 +4,8 @@ WORKDIR /app
 
 ENV PYTHONUNBUFFERED=1
 
-# Install dependencies
-COPY requirements.txt ./
+# Install agent-specific dependencies (from agent's own requirements.txt)
+COPY agents/adaptive_quiz_master/requirements.txt ./requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy agent code and shared modules

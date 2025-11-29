@@ -138,6 +138,7 @@ Respond with ONLY a JSON object in this EXACT format (no markdown, no backticks)
    - REQUIRED params by agent:
      * adaptive_quiz_master_agent: REQUIRES "topic" (what subject to quiz on)
      * research_scout_agent: REQUIRES "topic" (what to research)
+     * assignment_coach_agent: REQUIRES "assignment_title" (title of the assignment), "assignment_description" (description of what needs to be done)
      * concept_reinforcement_agent: REQUIRES "weak_topics" (what topics to practice/reinforce)
      * presentation_feedback_agent: REQUIRES "transcript" (the presentation transcript to analyze)
      * daily_revision_proctor_agent: REQUIRES "student_id" (will use default if not provided)

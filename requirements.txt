@@ -1,35 +1,29 @@
-bcrypt>=4.0.1
-passlib[bcrypt]==1.7.4
-chromadb>=0.5.0
+# Supervisor-only dependencies
+# This file is ONLY used by the supervisor service
+# Each agent has its own requirements.txt in its folder
+
+# Core web framework
 fastapi
 uvicorn
 pydantic
+
+# HTTP client for agent communication
+httpx
+
+# Authentication
 python-jose[cryptography]
 pyjwt
-httpx
+bcrypt>=4.0.1
+passlib[bcrypt]==1.7.4
+
+# Configuration
 PyYAML
+python-dotenv
+
+# Gemini API for orchestration
+google-generativeai
+
+# Testing (optional, can be removed in production)
 pytest
 pytest-asyncio
 requests
-aiosqlite
-google-generativeai
-python-dotenv
-langchain-core
-langchain-groq
-
-langchain
-langgraph>=0.0.20
-numpy>=2.0.0
-langchain-community
-langchain-huggingface
-faiss-cpu
-sentence-transformers
-pypdf
-unstructured
-reportlab
-requests
-python-multipart
-
-# Use CPU-only torch to avoid huge CUDA downloads (~1.5GB savings)
---extra-index-url https://download.pytorch.org/whl/cpu
-torch
