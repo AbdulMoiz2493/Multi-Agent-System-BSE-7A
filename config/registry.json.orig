@@ -22,12 +22,12 @@
       "how does",
       "why"
     ],
-    "status": "offline"
+    "status": "healthy"
   },
   {
     "id": "adaptive_quiz_master_agent",
     "name": "Quiz Generation Specialist",
-    "url": "http://adaptive-quiz-agent:5011",
+    "url": "http://adaptive-quiz-agent:5020",
     "description": "ONLY use for creating, generating, or making quizzes, tests, or practice questions. Specializes in: generating MCQs, true/false, short answer questions with specified difficulty levels and topics. Use when user wants to CREATE or GENERATE quiz questions, NOT for finding existing questions or predicting exam content.",
     "capabilities": [
       "quiz-generation",
@@ -48,7 +48,7 @@
       "true false questions",
       "generate questions"
     ],
-    "status": "offline"
+    "status": "healthy"
   },
   {
     "id": "assignment_coach_agent",
@@ -151,7 +151,10 @@
       "review",
       "weak topics"
     ],
-    "status": "offline"
+    "required_params": [
+      "weak_topics"
+    ],
+    "status": "healthy"
   },
   {
     "id": "citation_manager_agent",
@@ -232,7 +235,7 @@
   {
     "id": "presentation_feedback_agent",
     "name": "Presentation & Speech Analyzer",
-    "url": "http://presentation-feedback-agent:5019",
+    "url": "http://presentation-feedback-agent:5030",
     "description": "ONLY use for ANALYZING presentations, speeches, or talk transcripts. Provides: delivery feedback, confidence analysis, pacing review, material quality assessment. Use for: 'presentation feedback', 'analyze my speech', 'review my presentation', NOT for creating presentations or general writing feedback.",
     "capabilities": [
       "presentation-analysis",
@@ -251,7 +254,10 @@
       "transcript",
       "analyze speech"
     ],
-    "status": "offline"
+    "required_params": [
+      "transcript"
+    ],
+    "status": "healthy"
   },
   {
     "id": "lecture_insight_agent",
@@ -387,11 +393,11 @@
   },
 
   {
-    "id": "adaptive-quiz-master",
-    "name": "Adaptive Quiz Master",
-    "url": "http://localhost:5020",
-    "description": "Generates adaptive quizzes based on user performance",
-    "capabilities": ["quiz-generation", "performance-tracking", "adaptive-learning"]
->>>>>>> adaptive_quiz_master_agent/adaptive_quiz_master_agent
+    "id": "proctor-ai",
+    "name": "Proctor AI",
+    "url": "http://localhost:8080",
+    "description": "Proctoring and study analysis agent",
+    "capabilities": ["proctoring", "analysis"]
+>>>>>>> proctor_ai/main
   }
 ]
