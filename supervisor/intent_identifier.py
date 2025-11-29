@@ -9,10 +9,10 @@ from pathlib import Path # Ensure this is imported at the top
 _logger = logging.getLogger(__name__)
 
 
-# Configure Gemini API
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+# Configure Gemini API - Supervisor uses its own key
+GEMINI_API_KEY = os.getenv("SUPERVISOR_GEMINI_API_KEY") or os.getenv("GEMINI_API_KEY")
 if not GEMINI_API_KEY:
-    _logger.error("GEMINI_API_KEY not found in environment variables")
+    _logger.error("SUPERVISOR_GEMINI_API_KEY not found in environment variables")
 else:
     genai.configure(api_key=GEMINI_API_KEY)
 
@@ -139,6 +139,7 @@ Respond with ONLY a JSON object in this EXACT format (no markdown, no backticks)
      * adaptive_quiz_master_agent: REQUIRES "topic" (what subject to quiz on)
      * research_scout_agent: REQUIRES "topic" (what to research)
      * concept_reinforcement_agent: REQUIRES "weak_topics" (what topics to practice/reinforce)
+     * presentation_feedback_agent: REQUIRES "transcript" (the presentation transcript to analyze)
      * plagiarism_prevention_agent: REQUIRES text content
      * gemini-wrapper: No required params
 
@@ -158,6 +159,7 @@ Respond with ONLY a JSON object in this EXACT format (no markdown, no backticks)
    - For quiz without topic: "What topic would you like to be quizzed on? (e.g., Python, Math, History)"
    - For research without topic: "What topic would you like me to research?"
    - For concept reinforcement without weak_topics: "What topics are you struggling with and need extra practice on?"
+   - For presentation feedback without transcript: "Please provide the transcript of your presentation that you'd like me to analyze."
    - NEVER ask generic questions like "What do you need help with?"
 
 6. **Parameter Extraction**:

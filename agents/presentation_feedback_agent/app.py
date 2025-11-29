@@ -48,17 +48,17 @@ async def lifespan(app: FastAPI):
         logger.warning(f"Config file not found at {config_path}, using defaults")
         config = {}
 
-    # Get API key from environment or config
-    api_key = os.getenv("GEMINI_API_KEY")
+    # Get API key from environment or config - Presentation Feedback Agent uses its own key
+    api_key = os.getenv("PRESENTATION_FEEDBACK_GEMINI_API_KEY") or os.getenv("GEMINI_API_KEY")
     if not api_key and config.get('gemini_wrapper'):
         api_key = config['gemini_wrapper'].get('api_key')
 
     if not api_key:
-        logger.error("GEMINI_API_KEY not found in environment or config")
-        raise ValueError("GEMINI_API_KEY must be set")
+        logger.error("PRESENTATION_FEEDBACK_GEMINI_API_KEY not found in environment or config")
+        raise ValueError("PRESENTATION_FEEDBACK_GEMINI_API_KEY must be set")
 
     # Initialize analyzer
-    model_name = os.getenv("GEMINI_MODEL", "gemini-2.0-flash-exp")
+    model_name = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
     analyzer = PresentationAnalyzer(api_key=api_key, model_name=model_name)
 
     # Initialize LTM
@@ -88,9 +88,9 @@ async def ensure_initialized():
     if analyzer is None or ltm is None:
         logger.warning("Initializing analyzer and ltm (likely in test mode)")
 
-        api_key = os.getenv("GEMINI_API_KEY")
+        api_key = os.getenv("PRESENTATION_FEEDBACK_GEMINI_API_KEY") or os.getenv("GEMINI_API_KEY")
         if not api_key:
-            raise ValueError("GEMINI_API_KEY must be set")
+            raise ValueError("PRESENTATION_FEEDBACK_GEMINI_API_KEY must be set")
 
         model_name = os.getenv("GEMINI_MODEL", "gemini-2.0-flash-exp")
         analyzer = PresentationAnalyzer(api_key=api_key, model_name=model_name)

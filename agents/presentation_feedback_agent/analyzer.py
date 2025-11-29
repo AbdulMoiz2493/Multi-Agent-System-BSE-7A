@@ -63,9 +63,10 @@ class PresentationAnalyzer:
 
         except Exception as e:
             error_str = str(e)
+            logger.error(f"Full error details: {error_str}")
 
             # Check if it's a quota error
-            if "429" in error_str or "quota" in error_str.lower() or "exceeded" in error_str.lower():
+            if "429" in error_str or "quota" in error_str.lower() or "exceeded" in error_str.lower() or "resource" in error_str.lower():
                 logger.warning(f"Rate limit exceeded: {error_str}")
                 return self._create_rate_limit_response(presentation_data.presentation_id, error_str)
 

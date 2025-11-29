@@ -17,10 +17,10 @@ from pydantic import BaseModel
 
 _logger = logging.getLogger(__name__)
 
-# Configure Gemini API
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+# Configure Gemini API - Supervisor uses its own key
+GEMINI_API_KEY = os.getenv("SUPERVISOR_GEMINI_API_KEY") or os.getenv("GEMINI_API_KEY")
 if not GEMINI_API_KEY:
-    _logger.error("GEMINI_API_KEY not found in environment variables")
+    _logger.error("SUPERVISOR_GEMINI_API_KEY not found in environment variables")
 else:
     genai.configure(api_key=GEMINI_API_KEY)
 
@@ -275,6 +275,13 @@ Now analyze the user's message and respond with ONLY the JSON object (no preambl
 - Example: "Help me practice my weak areas in Python loops and functions"
 → Extracted: {weak_topics: ["Python loops", "Python functions"], learning_style: "visual"}
 - Keywords: weak topics, practice, reinforce, struggle with, need help with, practice concepts
+
+### Presentation Feedback Agent
+- Required: transcript (the presentation text to analyze)
+- Optional: title, presenter_name, duration_minutes, target_audience, presentation_type, focus_areas, detail_level
+- Example: "Analyze my presentation: Hello everyone, today I will talk about machine learning..."
+→ Extracted: {transcript: "Hello everyone, today I will talk about machine learning...", title: "Machine Learning Presentation"}
+- Keywords: presentation, speech, feedback, analyze presentation, public speaking, delivery
 """
         return definitions
 
@@ -576,6 +583,8 @@ Now analyze the user's message and respond with ONLY the JSON object (no preambl
             return self._format_for_gemini_wrapper(base_payload, extracted_params)
         elif agent_id == "concept_reinforcement_agent":
             return self._format_for_concept_reinforcement(base_payload, extracted_params)
+        elif agent_id == "presentation_feedback_agent":
+            return self._format_for_presentation_feedback(base_payload, extracted_params)
         else:
             # Fallback: just include extracted params
             _logger.warning(f"Unknown agent {agent_id}, using generic format")
@@ -686,6 +695,35 @@ Now analyze the user's message and respond with ONLY the JSON object (no preambl
                     "learning_style": params.get("learning_style") or "visual",
                     "max_tasks": int(params.get("max_tasks") or 3)
                 }
+            }
+        }
+
+    def _format_for_presentation_feedback(self, payload: Dict, params: Dict) -> Dict:
+        """Format for Presentation Feedback Agent - expects presentation data structure."""
+        import uuid as _uuid
+        
+        # Build metadata from extracted params
+        metadata = {
+            "language": params.get("language") or "en",
+            "duration_minutes": params.get("duration_minutes"),
+            "target_audience": params.get("target_audience"),
+            "presentation_type": params.get("presentation_type"),
+        }
+        
+        # Build analysis parameters
+        analysis_parameters = {
+            "focus_areas": params.get("focus_areas") or ["clarity", "pacing", "engagement", "material_relevance", "structure"],
+            "detail_level": params.get("detail_level") or "high"
+        }
+        
+        return {
+            "data": {
+                "presentation_id": params.get("presentation_id") or str(_uuid.uuid4()),
+                "title": params.get("title") or "Untitled Presentation",
+                "presenter_name": params.get("presenter_name") or params.get("user_id") or "Anonymous",
+                "transcript": params.get("transcript") or payload.get("request", ""),
+                "metadata": metadata,
+                "analysis_parameters": analysis_parameters
             }
         }
 

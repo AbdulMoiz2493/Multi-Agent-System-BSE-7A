@@ -124,7 +124,7 @@
       "academic sources",
       "journals"
     ],
-    "status": "offline"
+    "status": "healthy"
   },
   {
     "id": "concept_reinforcement_agent",
@@ -234,7 +234,7 @@
   {
     "id": "presentation_feedback_agent",
     "name": "Presentation & Speech Analyzer",
-    "url": "http://presentation-feedback-agent:5019",
+    "url": "http://presentation-feedback-agent:5030",
     "description": "ONLY use for ANALYZING presentations, speeches, or talk transcripts. Provides: delivery feedback, confidence analysis, pacing review, material quality assessment. Use for: 'presentation feedback', 'analyze my speech', 'review my presentation', NOT for creating presentations or general writing feedback.",
     "capabilities": [
       "presentation-analysis",
@@ -253,7 +253,10 @@
       "transcript",
       "analyze speech"
     ],
-    "status": "offline"
+    "required_params": [
+      "transcript"
+    ],
+    "status": "healthy"
   },
   {
     "id": "lecture_insight_agent",

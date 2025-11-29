@@ -206,6 +206,28 @@ def build_agent_payload(agent_id: str, user_request: str, intent_info: Dict[str,
         }
         payload['payload'] = payload_data
 
+    elif agent_id in ("presentation_feedback_agent", "presentation-feedback-agent", "presentation_feedback"):
+        # presentation_feedback expects data with presentation details
+        import uuid as _uuid
+        metadata = {
+            "language": extracted.get("language") or "en",
+            "duration_minutes": extracted.get("duration_minutes"),
+            "target_audience": extracted.get("target_audience"),
+            "presentation_type": extracted.get("presentation_type"),
+        }
+        analysis_parameters = {
+            "focus_areas": extracted.get("focus_areas") or ["clarity", "pacing", "engagement", "material_relevance", "structure"],
+            "detail_level": extracted.get("detail_level") or "high"
+        }
+        payload['data'] = {
+            "presentation_id": extracted.get("presentation_id") or str(_uuid.uuid4()),
+            "title": extracted.get("title") or "Untitled Presentation",
+            "presenter_name": extracted.get("presenter_name") or extracted.get("user_id") or "Anonymous",
+            "transcript": extracted.get("transcript") or payload.get("request", ""),
+            "metadata": metadata,
+            "analysis_parameters": analysis_parameters
+        }
+
     else:
         # Generic fallback: include extracted params under `params`
         if extracted:

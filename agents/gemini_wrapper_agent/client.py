@@ -12,7 +12,8 @@ with open("config/settings.yaml", "r") as f:
 _logger = logging.getLogger(__name__)
 
 GEMINI_CONFIG = config['gemini_wrapper']
-API_KEY = os.getenv("GEMINI_API_KEY")
+# Gemini Wrapper Agent uses its own key
+API_KEY = os.getenv("GEMINI_WRAPPER_API_KEY") or os.getenv("GEMINI_API_KEY")
 
 MODE = GEMINI_CONFIG.get("mode", "auto")
 
@@ -23,10 +24,10 @@ def get_mode():
         return "mock"
     # Auto mode
     if API_KEY:
-        _logger.info("GEMINI_API_KEY found, running in 'cloud' mode.")
+        _logger.info("GEMINI_WRAPPER_API_KEY found, running in 'cloud' mode.")
         genai.configure(api_key=API_KEY)
         return "cloud"
-    _logger.warning("GEMINI_API_KEY not set, falling back to 'mock' mode.")
+    _logger.warning("GEMINI_WRAPPER_API_KEY not set, falling back to 'mock' mode.")
     return "mock"
 
 async def call_gemini_or_mock(input_text: str, model_override: str = None) -> dict:
