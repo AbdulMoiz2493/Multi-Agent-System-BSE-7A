@@ -12,8 +12,28 @@ from supervisor import registry
 _logger = logging.getLogger(__name__)
 
 
+<<<<<<< HEAD
 async def decide_agent(payload: Any, available_agents: List[Any], conversation_history: Optional[List[Dict]] = None) -> Dict[str, Any]:
     """Decide which agent(s) should handle the given payload.
+=======
+    # Simple keyword-based routing for now.
+    # In a real system, this would be a more sophisticated model.
+    request_lower = payload.request.lower()
+    
+    # Route to assignment coach for assignment-related queries
+    if any(keyword in request_lower for keyword in ["assignment", "homework", "task breakdown", "study plan", "learning guidance"]):
+        for agent in agents:
+            if "assignment-guidance" in agent.capabilities:
+                _logger.info(f"Routing to {agent.id} based on assignment keywords.")
+                return [agent.id]
+    
+    # Route to gemini for text generation
+    if "generate" in request_lower or "summarize" in request_lower:
+        for agent in agents:
+            if "text-generation" in agent.capabilities:
+                _logger.info(f"Routing to {agent.id} based on keywords.")
+                return [agent.id]
+>>>>>>> assignment_coach_agent/main
 
     Args:
         payload: object or dict containing at least a `.request` string and
@@ -153,7 +173,6 @@ def build_agent_payload(agent_id: str, user_request: str, intent_info: Dict[str,
         # pass-through any other extracted params
         payload.update({k: v for k, v in extracted.items() if k not in ('topic', 'keywords', 'year_range', 'max_results')})
 
-<<<<<<< HEAD
     elif agent_id in ("adaptive_quiz_master_agent", "adaptive-quiz-master", "adaptive_quiz_master"):
         # Quiz master expects agent_name, intent, and nested payload structure
         import uuid as _uuid
@@ -194,7 +213,7 @@ def build_agent_payload(agent_id: str, user_request: str, intent_info: Dict[str,
                 }
             }
         }
-=======
+
     elif agent_id in ("concept_reinforcement_agent", "concept-reinforcement-agent", "concept_reinforcement"):
         # concept_reinforcement expects a specific payload structure
         payload_data = {
@@ -206,7 +225,155 @@ def build_agent_payload(agent_id: str, user_request: str, intent_info: Dict[str,
             }
         }
         payload['payload'] = payload_data
->>>>>>> 99410461e92a9544668d22cdf35edcfebf1e9fbb
+
+    elif agent_id in ("presentation_feedback_agent", "presentation-feedback-agent", "presentation_feedback"):
+        # presentation_feedback expects data with presentation details
+        import uuid as _uuid
+        metadata = {
+            "language": extracted.get("language") or "en",
+            "duration_minutes": extracted.get("duration_minutes"),
+            "target_audience": extracted.get("target_audience"),
+            "presentation_type": extracted.get("presentation_type"),
+        }
+        analysis_parameters = {
+            "focus_areas": extracted.get("focus_areas") or ["clarity", "pacing", "engagement", "material_relevance", "structure"],
+            "detail_level": extracted.get("detail_level") or "high"
+        }
+        payload['data'] = {
+            "presentation_id": extracted.get("presentation_id") or str(_uuid.uuid4()),
+            "title": extracted.get("title") or "Untitled Presentation",
+            "presenter_name": extracted.get("presenter_name") or extracted.get("user_id") or "Anonymous",
+            "transcript": extracted.get("transcript") or payload.get("request", ""),
+            "metadata": metadata,
+            "analysis_parameters": analysis_parameters
+        }
+
+    elif agent_id in ("daily_revision_proctor_agent", "daily-revision-proctor-agent", "daily_revision_proctor"):
+        # daily_revision_proctor expects supervisor analyze format
+        from datetime import datetime as _dt
+        activity_log = extracted.get("activity_log") or []
+        if not activity_log:
+            today = _dt.now().strftime("%Y-%m-%d")
+            activity_log = [{
+                "date": today,
+                "subject": extracted.get("subject") or "General Study",
+                "hours": extracted.get("hours") or 1.0,
+                "status": "completed"
+            }]
+        
+        payload = {
+            "student_id": extracted.get("student_id") or extracted.get("user_id") or "1",
+            "profile": {
+                "name": extracted.get("name") or "Student",
+                "grade": extracted.get("grade") or "N/A"
+            },
+            "study_schedule": {
+                "preferred_times": extracted.get("preferred_times") or ["09:00", "14:00", "19:00"],
+                "daily_goal_hours": extracted.get("daily_goal_hours") or 3.0
+            },
+            "activity_log": activity_log,
+            "user_feedback": {
+                "reminder_effectiveness": extracted.get("reminder_effectiveness") or 4,
+                "motivation_level": extracted.get("motivation_level") or "medium"
+            },
+            "context": {
+                "request_type": extracted.get("request_type") or "analysis",
+                "supervisor_id": "supervisor_main",
+                "priority": "normal"
+            }
+        }
+
+    elif agent_id in ("peer_collaboration_agent", "peer-collaboration-agent", "peer_collaboration"):
+        # peer_collaboration expects team data and discussion logs
+        import uuid as _uuid
+        import re
+        
+        team_members = extracted.get("team_members") or []
+        if isinstance(team_members, str):
+            team_members = [m.strip() for m in team_members.split(",") if m.strip()]
+        
+        discussion_logs = extracted.get("discussion_logs") or []
+        
+        # Normalize discussion logs to ensure proper format
+        normalized_logs = []
+        if discussion_logs:
+            for log in discussion_logs:
+                if isinstance(log, dict):
+                    normalized_logs.append({
+                        "user_id": log.get("user_id") or log.get("user") or log.get("name") or "unknown",
+                        "message": log.get("message") or log.get("text") or log.get("content") or "",
+                        "timestamp": log.get("timestamp") or log.get("time") or ""
+                    })
+                elif isinstance(log, str):
+                    # Parse string format like "Alice (2025-11-29 10:00): message"
+                    match = re.match(r'^([^(]+)\s*\(([^)]+)\):\s*(.+)$', log.strip())
+                    if match:
+                        normalized_logs.append({
+                            "user_id": match.group(1).strip(),
+                            "timestamp": match.group(2).strip(),
+                            "message": match.group(3).strip().strip('"\'')
+                        })
+                    else:
+                        normalized_logs.append({
+                            "user_id": "unknown",
+                            "message": log,
+                            "timestamp": ""
+                        })
+        
+        payload = {
+            "agent_name": "peer_collaboration_agent",
+            "intent": "analyze_collaboration",
+            "payload": {
+                "project_id": extracted.get("project_id") or str(_uuid.uuid4()),
+                "team_members": team_members,
+                "action": extracted.get("action") or "analyze",
+                "discussion_logs": normalized_logs
+            }
+        }
+
+    elif agent_id in ("exam_readiness_agent", "exam-readiness-agent", "exam_readiness"):
+        # exam_readiness expects assessment generation parameters
+        # Map assessment_type to valid enum values
+        assessment_type = (extracted.get("assessment_type") or "quiz").lower()
+        valid_types = ["quiz", "exam", "assignment"]
+        if assessment_type not in valid_types:
+            assessment_type = "quiz"
+        
+        # Map difficulty to valid enum values
+        difficulty = (extracted.get("difficulty") or "medium").lower()
+        valid_difficulties = ["easy", "medium", "hard"]
+        if difficulty not in valid_difficulties:
+            difficulty_map = {
+                "beginner": "easy",
+                "intermediate": "medium", 
+                "advanced": "hard"
+            }
+            difficulty = difficulty_map.get(difficulty, "medium")
+        
+        # Get question count
+        question_count = extracted.get("question_count") or extracted.get("num_questions") or 5
+        if isinstance(question_count, str):
+            try:
+                question_count = int(question_count)
+            except ValueError:
+                question_count = 5
+        
+        # Build type_counts
+        type_counts = extracted.get("type_counts")
+        if not type_counts:
+            type_counts = {"mcq": question_count}
+        
+        payload = {
+            "subject": extracted.get("subject") or extracted.get("topic") or "General",
+            "assessment_type": assessment_type,
+            "difficulty": difficulty,
+            "question_count": question_count,
+            "type_counts": type_counts,
+            "allow_latex": extracted.get("allow_latex", True),
+            "created_by": extracted.get("created_by") or "supervisor",
+            "use_rag": extracted.get("use_rag", False),
+            "export_pdf": extracted.get("export_pdf", False)
+        }
 
     else:
         # Generic fallback: include extracted params under `params`

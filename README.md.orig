@@ -21,12 +21,26 @@ This repository contains the backend for a multi-agent system, featuring a Super
 │   ├── routing.py            # Request routing logic
 │   ├── worker_client.py      # Client for communicating with workers
 │   └── tests/                # Tests for the supervisor
+<<<<<<< HEAD
 ├── gemini_wrapper_agent/     # Gemini-wrapper worker agent (renamed for registry consistency)
 │   ├── __init__.py
 │   ├── app.py                # Main FastAPI app for the worker
 │   ├── client.py             # Logic for calling Gemini API or mock
 │   ├── ltm.py                # Long-term memory (SQLite)
 │   └── tests/                # Tests for the gemini wrapper
+=======
+├── agents/
+│   ├── gemini_wrapper/       # Gemini-wrapper worker agent
+│   │   ├── app.py            # Main FastAPI app for the worker
+│   │   ├── client.py         # Logic for calling Gemini API or mock
+│   │   ├── ltm.py            # Long-term memory (SQLite)
+│   │   └── tests/            # Tests for the gemini wrapper
+│   └── assignment_coach/     # Assignment Coach worker agent
+│       ├── app.py            # Main FastAPI app for the agent
+│       ├── coach_agent.py    # LangGraph workflow
+│       ├── ltm.py            # Long-term memory (ChromaDB)
+│       └── tests/            # Tests for the assignment coach
+>>>>>>> assignment_coach_agent/main
 ├── shared/
 │   └── models.py             # Pydantic models shared across services
 ├── tests/

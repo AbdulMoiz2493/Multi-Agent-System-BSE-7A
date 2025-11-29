@@ -1,7 +1,7 @@
 import jwt
 from fastapi import HTTPException, Security
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from passlib.context import CryptContext
+import bcrypt
 from datetime import datetime, timedelta
 import yaml
 
@@ -12,8 +12,11 @@ SECRET_KEY = config['supervisor']['jwt_secret']
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 security = HTTPBearer()
+
+# Pre-hashed password for "password"
+# Generated with: bcrypt.hashpw(b'password', bcrypt.gensalt())
+PREHASHED_PASSWORD = b'$2b$12$gLN3LTjAa2D98ncp8qiZkeBhuTNNiz8BsC6MWwV6eylH6OUc9S8ii'
 
 # In-memory user store for simplicity
 users_db = {
@@ -22,7 +25,7 @@ users_db = {
         "name": "Test User",
         "email": "test@example.com",
         "avatar": None,
-        "password_hash": pwd_context.hash("password")
+        "password_hash": PREHASHED_PASSWORD
     }
 }
 
@@ -38,7 +41,11 @@ def login(payload: dict):
     password = payload.get("password") # Assuming password is provided for a real login
     user_data = users_db.get(email)
     
-    if not user_data or not pwd_context.verify(password, user_data["password_hash"]):
+    if not user_data:
+        raise HTTPException(status_code=401, detail="Incorrect email or password")
+    
+    # Verify password using bcrypt
+    if not bcrypt.checkpw(password.encode('utf-8'), user_data["password_hash"]):
         raise HTTPException(status_code=401, detail="Incorrect email or password")
 
     from shared.models import User

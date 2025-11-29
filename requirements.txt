@@ -1,9 +1,10 @@
+bcrypt>=4.0.1
+passlib[bcrypt]==1.7.4
+chromadb>=0.5.0
 fastapi
 uvicorn
 pydantic
 python-jose[cryptography]
-passlib[bcrypt]==1.7.4
-bcrypt==3.2.0
 pyjwt
 httpx
 PyYAML
@@ -17,6 +18,8 @@ langchain-core
 langchain-groq
 
 langchain
+langgraph>=0.0.20
+numpy>=2.0.0
 langchain-community
 langchain-huggingface
 faiss-cpu

@@ -206,7 +206,11 @@
       "team analysis",
       "group feedback"
     ],
-    "status": "offline"
+    "required_params": [
+      "team_members",
+      "discussion_logs"
+    ],
+    "status": "healthy"
   },
   {
     "id": "adaptive_flashcard_agent",
@@ -312,7 +316,7 @@
   {
     "id": "daily_revision_proctor_agent",
     "name": "Daily Study Habit Tracker",
-    "url": "http://daily-revision-agent:5022",
+    "url": "http://daily-revision-proctor-agent:8080",
     "description": "ONLY use for TRACKING daily study habits, setting study reminders, or monitoring revision progress over time. Provides: progress tracking, study reminders, habit monitoring, routine suggestions. Use for: 'track my study', 'study reminders', 'monitor progress', 'daily revision', NOT for creating schedules or timetables.",
     "capabilities": [
       "progress-tracking",
@@ -333,7 +337,10 @@
       "habit",
       "track progress"
     ],
-    "status": "offline"
+    "required_params": [
+      "student_id"
+    ],
+    "status": "healthy"
   },
   {
     "id": "study_scheduler_agent",
@@ -383,7 +390,13 @@
       "evaluate preparation",
       "mock test"
     ],
-    "status": "offline"
+    "required_params": [
+      "subject",
+      "assessment_type",
+      "difficulty",
+      "question_count"
+    ],
+    "status": "healthy"
 =======
     "id": "gemini-wrapper",
     "name": "Gemini Wrapper",
@@ -391,13 +404,17 @@
     "description": "LLM wrapper for text generation",
     "capabilities": ["text-generation"]
   },
-
   {
-    "id": "proctor-ai",
-    "name": "Proctor AI",
-    "url": "http://localhost:8080",
-    "description": "Proctoring and study analysis agent",
-    "capabilities": ["proctoring", "analysis"]
->>>>>>> proctor_ai/main
+    "id": "assignment-coach",
+    "name": "Assignment Coach Agent",
+    "url": "http://localhost:5011",
+    "description": "Provide assignment understanding, task breakdown, resource suggestions, and progress guidance",
+    "capabilities": [
+      "assignment-guidance",
+      "task-planning",
+      "resource-recommendation",
+      "student-coaching"
+    ]
+>>>>>>> assignment_coach_agent/main
   }
 ]

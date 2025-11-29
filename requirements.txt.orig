@@ -1,9 +1,10 @@
+bcrypt>=4.0.1
+passlib[bcrypt]==1.7.4
+chromadb>=0.5.0
 fastapi
 uvicorn
 pydantic
 python-jose[cryptography]
-passlib[bcrypt]==1.7.4
-bcrypt==3.2.0
 pyjwt
 httpx
 PyYAML
@@ -12,11 +13,28 @@ pytest-asyncio
 requests
 aiosqlite
 google-generativeai
-python-dotenv
 <<<<<<< HEAD
+python-dotenv
 langchain-core
 langchain-groq
 
+langchain
+langchain-community
+langchain-huggingface
+faiss-cpu
+sentence-transformers
+pypdf
+unstructured
+reportlab
+requests
+python-multipart
+
+# Use CPU-only torch to avoid huge CUDA downloads (~1.5GB savings)
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch
 =======
 dotenv
->>>>>>> presentation_feedback_agent/main
+langgraph>=0.0.20
+langchain-core>=0.1.0
+numpy>=2.0.0
+>>>>>>> assignment_coach_agent/main
