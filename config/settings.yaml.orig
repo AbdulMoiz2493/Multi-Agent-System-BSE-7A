@@ -14,13 +14,26 @@ gemini_wrapper:
   api_key_env: "GEMINI_API_KEY"
 
 <<<<<<< HEAD
-research_finder:
-  host: 127.0.0.1
-  port: 5012
-
-=======
 adaptive_quiz_master:
   host: 127.0.0.1
   port: 5020
   question_bank_path: "./agents/adaptive_quiz_master/question_bank.json"
->>>>>>> adaptive_quiz_master_agent/adaptive_quiz_master_agent
+
+research_finder:
+  host: 127.0.0.1
+  port: 5012
+
+presentation_feedback:
+  host: 127.0.0.1
+  port: 5019
+  mode: "auto"  # auto -> cloud if env present else mock
+  api_key_env: "GEMINI_API_KEY"
+  ltm_db_path: "./agents/presentation_feedback_agent/ltm_cache.db"
+  model_name: "gemini-2.5-flash"
+
+=======
+peer_collaboration:
+  host: 127.0.0.1
+  port: 5011
+  mode: "local"  # no external API needed
+>>>>>>> peer_collaboration_agent/peer_collaboration_agent
