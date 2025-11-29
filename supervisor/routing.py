@@ -228,6 +228,41 @@ def build_agent_payload(agent_id: str, user_request: str, intent_info: Dict[str,
             "analysis_parameters": analysis_parameters
         }
 
+    elif agent_id in ("daily_revision_proctor_agent", "daily-revision-proctor-agent", "daily_revision_proctor"):
+        # daily_revision_proctor expects supervisor analyze format
+        from datetime import datetime as _dt
+        activity_log = extracted.get("activity_log") or []
+        if not activity_log:
+            today = _dt.now().strftime("%Y-%m-%d")
+            activity_log = [{
+                "date": today,
+                "subject": extracted.get("subject") or "General Study",
+                "hours": extracted.get("hours") or 1.0,
+                "status": "completed"
+            }]
+        
+        payload = {
+            "student_id": extracted.get("student_id") or extracted.get("user_id") or "1",
+            "profile": {
+                "name": extracted.get("name") or "Student",
+                "grade": extracted.get("grade") or "N/A"
+            },
+            "study_schedule": {
+                "preferred_times": extracted.get("preferred_times") or ["09:00", "14:00", "19:00"],
+                "daily_goal_hours": extracted.get("daily_goal_hours") or 3.0
+            },
+            "activity_log": activity_log,
+            "user_feedback": {
+                "reminder_effectiveness": extracted.get("reminder_effectiveness") or 4,
+                "motivation_level": extracted.get("motivation_level") or "medium"
+            },
+            "context": {
+                "request_type": extracted.get("request_type") or "analysis",
+                "supervisor_id": "supervisor_main",
+                "priority": "normal"
+            }
+        }
+
     else:
         # Generic fallback: include extracted params under `params`
         if extracted:

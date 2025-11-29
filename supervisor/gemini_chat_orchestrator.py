@@ -282,6 +282,13 @@ Now analyze the user's message and respond with ONLY the JSON object (no preambl
 - Example: "Analyze my presentation: Hello everyone, today I will talk about machine learning..."
 → Extracted: {transcript: "Hello everyone, today I will talk about machine learning...", title: "Machine Learning Presentation"}
 - Keywords: presentation, speech, feedback, analyze presentation, public speaking, delivery
+
+### Daily Revision Proctor Agent
+- Required: None (uses defaults, but student_id helps personalization)
+- Optional: student_id, subject, hours, preferred_times, daily_goal_hours
+- Example: "Track my daily study progress" or "I studied Math for 2 hours today"
+→ Extracted: {subject: "Math", hours: 2}
+- Keywords: track study, daily revision, study habits, monitor progress, study reminders, track progress
 """
         return definitions
 
@@ -585,6 +592,8 @@ Now analyze the user's message and respond with ONLY the JSON object (no preambl
             return self._format_for_concept_reinforcement(base_payload, extracted_params)
         elif agent_id == "presentation_feedback_agent":
             return self._format_for_presentation_feedback(base_payload, extracted_params)
+        elif agent_id == "daily_revision_proctor_agent":
+            return self._format_for_daily_revision_proctor(base_payload, extracted_params)
         else:
             # Fallback: just include extracted params
             _logger.warning(f"Unknown agent {agent_id}, using generic format")
@@ -724,6 +733,44 @@ Now analyze the user's message and respond with ONLY the JSON object (no preambl
                 "transcript": params.get("transcript") or payload.get("request", ""),
                 "metadata": metadata,
                 "analysis_parameters": analysis_parameters
+            }
+        }
+
+    def _format_for_daily_revision_proctor(self, payload: Dict, params: Dict) -> Dict:
+        """Format for Daily Revision Proctor Agent - expects supervisor analyze format."""
+        from datetime import datetime, timedelta
+        
+        # Build activity log from recent sessions if available
+        activity_log = params.get("activity_log") or []
+        if not activity_log:
+            # Create a default activity log entry
+            today = datetime.now().strftime("%Y-%m-%d")
+            activity_log = [{
+                "date": today,
+                "subject": params.get("subject") or "General Study",
+                "hours": params.get("hours") or 1.0,
+                "status": "completed"
+            }]
+        
+        return {
+            "student_id": params.get("student_id") or params.get("user_id") or "1",
+            "profile": {
+                "name": params.get("name") or "Student",
+                "grade": params.get("grade") or "N/A"
+            },
+            "study_schedule": {
+                "preferred_times": params.get("preferred_times") or ["09:00", "14:00", "19:00"],
+                "daily_goal_hours": params.get("daily_goal_hours") or 3.0
+            },
+            "activity_log": activity_log,
+            "user_feedback": {
+                "reminder_effectiveness": params.get("reminder_effectiveness") or 4,
+                "motivation_level": params.get("motivation_level") or "medium"
+            },
+            "context": {
+                "request_type": params.get("request_type") or "analysis",
+                "supervisor_id": "supervisor_main",
+                "priority": "normal"
             }
         }
 

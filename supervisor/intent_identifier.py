@@ -140,6 +140,7 @@ Respond with ONLY a JSON object in this EXACT format (no markdown, no backticks)
      * research_scout_agent: REQUIRES "topic" (what to research)
      * concept_reinforcement_agent: REQUIRES "weak_topics" (what topics to practice/reinforce)
      * presentation_feedback_agent: REQUIRES "transcript" (the presentation transcript to analyze)
+     * daily_revision_proctor_agent: REQUIRES "student_id" (will use default if not provided)
      * plagiarism_prevention_agent: REQUIRES text content
      * gemini-wrapper: No required params
 

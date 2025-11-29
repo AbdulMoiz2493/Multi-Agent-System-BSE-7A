@@ -311,7 +311,7 @@
   {
     "id": "daily_revision_proctor_agent",
     "name": "Daily Study Habit Tracker",
-    "url": "http://daily-revision-agent:5022",
+    "url": "http://daily-revision-proctor-agent:8080",
     "description": "ONLY use for TRACKING daily study habits, setting study reminders, or monitoring revision progress over time. Provides: progress tracking, study reminders, habit monitoring, routine suggestions. Use for: 'track my study', 'study reminders', 'monitor progress', 'daily revision', NOT for creating schedules or timetables.",
     "capabilities": [
       "progress-tracking",
@@ -332,7 +332,10 @@
       "habit",
       "track progress"
     ],
-    "status": "offline"
+    "required_params": [
+      "student_id"
+    ],
+    "status": "healthy"
   },
   {
     "id": "study_scheduler_agent",
