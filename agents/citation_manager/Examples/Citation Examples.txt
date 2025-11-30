@@ -1,0 +1,16 @@
+In 2023, John Smith and Alice Chen published an article called “Climate Change Impacts on Urban Heat Islands” that really helped my project. It appeared in the Journal of Environmental Science, volume 58, issue 4, pages 123–145, and the results were pretty compelling. If you want the exact version they used, the DOI is 10.1000/jes.2023.456789 and the canonical link is https://doi.org/10.1000/jes.2023.456789 . Their methods were straightforward and the conclusions were clear.
+
+
+I’ve been learning a lot from Maria Gonzalez’s book “Data Science for Everyone,” especially the introductory chapters covering basic modeling concepts. It was published by Cambridge University Press in 2019, and the ISBN is 978-1-107-12345-6. When I got stuck, I checked the publisher’s page for examples: https://www.cambridge.org/books/data-science-for-everyone . The case studies in the middle chapters are very approachable.
+
+
+I first understood React Hooks from a practical perspective thanks to a DevBlog post by Sana Khan, titled “How to Start With React Hooks.” It was published May 12, 2024, and I accessed it later on June 20, 2024. The post lives at https://devblog.example.com/react-hooks-guide , and the explanations balance theory with quick snippets that work in real projects. It’s a solid starting point for beginners.
+
+
+One of the strongest results I’ve seen on efficiency for graph neural networks came from Kevin Lee and Rahul Patel at NeurIPS 2021. Their paper, “Efficient Graph Neural Networks,” was included in the Proceedings of NeurIPS (volume 34), pages 210–225, and it’s easy to spot why it’s frequently cited. If you need the persistent identifier, the DOI is 10.5555/neurips.2021.lee-patel, and the paper is listed at https://papers.nips.cc/paper/2021/hash/efficient-gnn.html . Their benchmarks are particularly convincing.
+
+
+Residual networks really clicked for me after reading “Deep Residual Learning for Image Recognition” by Kaiming He, Xiangyu Zhang, Shaoqing Ren, and Jian Sun. It’s from the IEEE Conference on Computer Vision and Pattern Recognition (CVPR), 2016, pages 770–778. The DOI is 10.1109/CVPR.2016.90, and the open access PDF is at https://openaccess.thecvf.com/content_cvpr_2016/papers/He_Deep_Residual_Learning_CVPR_2016_paper.pdf . The architecture section makes the intuition behind skip connections feel very natural.
+
+
+For practical microservices guidance, I liked “A Practical Guide to Microservices,” authored by Sara Ahmed and Martin Richardson. It’s in the Software Architecture Journal, 2022, volume 12, issue 3, pages 45–67. The article balances design trade‑offs with deployment strategies you can apply quickly. The DOI is 10.1234/saj.2022.003, and there’s a summary at https://sajournal.example.com/microservices-guide . It’s a good overview without being overly academic.

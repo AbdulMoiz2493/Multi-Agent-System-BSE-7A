@@ -77,7 +77,7 @@
   {
     "id": "plagiarism_prevention_agent",
     "name": "Plagiarism Checker & Text Originality Improver",
-    "url": "http://plagiarism-agent:5013",
+    "url": "http://plagiarism-prevention-agent:8000",
     "description": "ONLY use for CHECKING text for plagiarism or REPHRASING content to improve originality. Specializes in: detecting copied content, comparing against databases, rephrasing while preserving meaning, generating plagiarism scores. Use for: 'check plagiarism', 'is this copied', 'rephrase', 'improve originality', 'paraphrase', NOT for general writing help.",
     "capabilities": [
       "plagiarism-detection",
@@ -97,7 +97,7 @@
       "authenticity",
       "improve originality"
     ],
-    "status": "offline"
+    "status": "healthy"
   },
   {
     "id": "research_scout_agent",
@@ -179,7 +179,7 @@
       "generate citation",
       "create citation"
     ],
-    "status": "offline"
+    "status": "healthy"
   },
   {
     "id": "peer_collaboration_agent",

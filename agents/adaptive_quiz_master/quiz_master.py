@@ -2,6 +2,7 @@ import uuid
 import logging
 import json
 import httpx
+import os
 from typing import Dict, List, Optional, Union
 from datetime import datetime, UTC
 
@@ -16,6 +17,11 @@ from .ltm import (
 )
 
 _logger = logging.getLogger("aqma")
+
+# Use Docker service name for Gemini wrapper, fallback to localhost for local dev
+GEMINI_WRAPPER_HOST = os.getenv("GEMINI_WRAPPER_HOST", "gemini-wrapper")
+GEMINI_WRAPPER_PORT = os.getenv("GEMINI_WRAPPER_PORT", "5010")
+GEMINI_WRAPPER_URL = f"http://{GEMINI_WRAPPER_HOST}:{GEMINI_WRAPPER_PORT}"
 
 class AdaptiveQuizMaster:
     def __init__(self, question_bank_path: str):
@@ -109,7 +115,7 @@ class AdaptiveQuizMaster:
             "task": {
                 "name": "generate_text",
                 "parameters": {
-                    "prompt": prompt,
+                    "request": prompt,  # Changed from "prompt" to "request"
                     "max_tokens": 2000
                 }
             }
@@ -117,9 +123,21 @@ class AdaptiveQuizMaster:
 
         try:
             async with httpx.AsyncClient(timeout=30.0) as client:
-                resp = await client.post("http://localhost:5010/process", json=payload)
+                resp = await client.post(f"{GEMINI_WRAPPER_URL}/process", json=payload)
                 resp.raise_for_status()
-                raw = resp.json()["results"]["generated_text"]
+                response_data = resp.json()
+                
+                # Handle the response format from gemini wrapper
+                if "results" in response_data:
+                    # Gemini wrapper returns results.output, not results.generated_text
+                    raw = response_data["results"].get("output") or response_data["results"].get("generated_text", "")
+                else:
+                    raw = ""
+                
+                if not raw:
+                    _logger.error(f"Empty response from Gemini wrapper: {response_data}")
+                    return []
+                
                 questions = json.loads(raw)
                 for q in questions:
                     q["id"] = str(uuid.uuid4())

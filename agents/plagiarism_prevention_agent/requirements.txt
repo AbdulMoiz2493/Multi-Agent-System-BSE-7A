@@ -3,9 +3,12 @@ uvicorn[standard]>=0.32.0
 pydantic>=2.10.0
 sentence-transformers>=2.7.0
 transformers>=4.46.0
+# CPU-only PyTorch - much smaller install size (~2GB less)
+# For GPU support, replace with: torch>=2.6.0
+--extra-index-url https://download.pytorch.org/whl/cpu
 torch>=2.6.0
-tf-keras>=2.16.0
 sentencepiece>=0.1.99
+protobuf>=4.25.0
 numpy>=1.24.3
 scikit-learn>=1.3.2
 pymongo>=4.10.0

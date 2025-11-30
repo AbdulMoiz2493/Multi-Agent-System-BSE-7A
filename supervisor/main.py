@@ -2,7 +2,7 @@
 import logging
 import asyncio
 import yaml
-from fastapi import FastAPI, Depends, HTTPException, Body, Query
+from fastapi import FastAPI, Depends, HTTPException, Body, Query, UploadFile, File
 from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Optional, List, Dict
@@ -75,17 +75,23 @@ app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+class LoginRequest(BaseModel):
+    email: str
+    password: str
+
 @app.post('/api/auth/login')
-async def login(payload: dict):
-    if "email" not in payload or "password" not in payload:
-        raise HTTPException(status_code=400, detail="Email and password required")
-    return auth.login(payload)
+async def login(req: LoginRequest = Body(...)):
+    return auth.login(req.model_dump())
+
+@app.get('/health')
+async def health():
+    return {"status": "ok"}
 
 @app.post('/api/auth/logout')
 async def logout(user: User = Depends(auth.require_auth)):
@@ -807,3 +813,86 @@ async def clear_conversation_history_endpoint(user: User = Depends(auth.require_
     """Clear conversation history for the current user."""
     memory_manager.clear_conversation_history(user.id)
     return {"message": "Conversation history cleared successfully"}
+
+@app.post('/api/supervisor/citation/process')
+async def supervisor_citation_process(
+    payload: dict,
+    user: User = Depends(auth.require_auth)
+):
+    agent_id = "citation_manager_agent"
+    try:
+        params = payload or {}
+        agent_specific = {"agent_specific_data": {"payload": params}}
+        forward_payload = RequestPayload(agentId=agent_id, request=str(params.get("raw_text") or params.get("request") or ""), autoRoute=False)
+        rr = await forward_to_agent(agent_id, forward_payload, agent_specific=agent_specific)
+        return rr.dict() if hasattr(rr, 'dict') else {"response": str(rr)}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post('/api/supervisor/citation/bibliography')
+async def supervisor_citation_bibliography(
+    payload: dict,
+    user: User = Depends(auth.require_auth)
+):
+    agent_id = "citation_manager_agent"
+    try:
+        params = payload or {}
+        forward_payload = RequestPayload(agentId=agent_id, request=str(params.get("request") or ""), autoRoute=False)
+        rr = await forward_to_agent(agent_id, forward_payload, agent_specific=params)
+        return rr.dict() if hasattr(rr, 'dict') else {"response": str(rr)}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post('/api/supervisor/citation/upload-pdf')
+async def supervisor_citation_upload_pdf(
+    file: UploadFile = File(...),
+    style: str = "APA",
+    includeDOI: bool = True,
+    llm_parse: bool = True,
+    save: bool = False,
+    save_all: bool = False,
+    user: User = Depends(auth.require_auth)
+):
+    agent = registry.get_agent("citation_manager_agent")
+    if not agent:
+        raise HTTPException(status_code=404, detail="citation_manager_agent not found")
+    try:
+        data = await file.read()
+        form = {
+            "style": style,
+            "includeDOI": str(bool(includeDOI)).lower(),
+            "llm_parse": str(bool(llm_parse)).lower(),
+            "save": str(bool(save)).lower(),
+            "save_all": str(bool(save_all)).lower(),
+            "user_id": user.id,
+        }
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            resp = await client.post(
+                f"{agent.url}/upload/pdf",
+                data=form,
+                files={"file": (file.filename or "upload.pdf", data, "application/pdf")},
+            )
+        if resp.status_code != 200:
+            raise HTTPException(status_code=resp.status_code, detail=resp.text)
+        return resp.json()
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post('/api/supervisor/citation/ltm/retrieve')
+async def supervisor_citation_ltm_retrieve(
+    payload: dict,
+    user: User = Depends(auth.require_auth)
+):
+    agent_id = "citation_manager_agent"
+    try:
+        params = payload or {}
+        if "user_id" not in params:
+            params["user_id"] = user.id
+        agent_specific = {"agent_specific_data": {"payload": params}}
+        forward_payload = RequestPayload(agentId=agent_id, request=str(params.get("query") or ""), autoRoute=False)
+        rr = await forward_to_agent(agent_id, forward_payload, agent_specific=agent_specific)
+        return rr.dict() if hasattr(rr, 'dict') else {"response": str(rr)}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

@@ -8,7 +8,7 @@ ENV PYTHONUNBUFFERED=1
 
 # Copy dependency manifest and install first to leverage build cache
 COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt && pip install --no-cache-dir python-multipart
 
 # Copy application code
 COPY . .

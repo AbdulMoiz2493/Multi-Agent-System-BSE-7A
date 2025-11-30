@@ -1,0 +1,49 @@
+{
+  "status": "ok",
+  "result": {
+    "formatted_citation": "Doe, J. & Smith, J. (2021). Example title. Nature, 12(3), 44-55. https://doi.org/10.1234/example-doi",
+    "style_used": "APA",
+    "confidence": 0.95,
+    "errors_detected": [],
+    "suggestions": [
+      "Ensure journal title is in title case per APA.",
+      "Verify page range punctuation (use en dash)."
+    ],
+    "suggestions_llm": [
+      "Add issue number if available.",
+      "Confirm DOI is resolvable."
+    ],
+    "live_checks": {
+      "doi_valid": true,
+      "url_valid": true
+    },
+    "parsed_metadata": {
+      "title": "Example title",
+      "authors": ["John Doe", "Jane Smith"],
+      "year": 2021,
+      "journal": "Nature",
+      "publisher": "",
+      "volume": "12",
+      "issue": "3",
+      "pages": "44-55",
+      "doi": "10.1234/example-doi",
+      "url": "https://example.com/article"
+    },
+    "pre_llm_metadata": {
+      "title": "Example title",
+      "authors": ["John Doe", "Jane Smith"],
+      "year": 2021
+    },
+    "llm_applied_changes": {
+      "authors": ["Doe, John", "Smith, Jane"]
+    },
+    "source_type_used": "article"
+  },
+  "meta": {
+    "agent": "citation_manager",
+    "version": "1.1.0",
+    "timestamp": "2025-01-01T12:00:00Z",
+    "render_engine": "CSL",
+    "csl_style_path": "/styles/apa.csl"
+  }
+}

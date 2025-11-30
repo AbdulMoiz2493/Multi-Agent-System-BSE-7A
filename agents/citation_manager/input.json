@@ -1,0 +1,34 @@
+{
+  "message_id": "example-message-id",
+  "sender": "CitationUI",
+  "recipient": "CitationManagerAgent",
+  "type": "task_assignment",
+  "task": {
+    "name": "process",
+    "parameters": {
+      "agent_specific_data": {
+        "intent": "generate_citation",
+        "raw_text": "Raw citation text pasted by user...",
+        "metadata": {
+          "title": "Example title",
+          "authors": ["John Doe", "Jane Smith"],
+          "year": 2021,
+          "journal": "Nature",
+          "publisher": "",
+          "volume": "12",
+          "issue": "3",
+          "pages": "44-55",
+          "doi": "10.1234/example-doi",
+          "url": "https://example.com/article"
+        },
+        "style": "APA",
+        "source_type": "article",
+        "includeDOI": true,
+        "llm_parse": true,
+        "save": true,
+        "save_all": true,
+        "user_id": "user-123"
+      }
+    }
+  }
+}
