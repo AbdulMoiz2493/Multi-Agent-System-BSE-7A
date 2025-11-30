@@ -1,4 +1,4 @@
-# Peer Collaboration Agent (Detailed)
+# Peer Collaboration Agent
 
 *A focused micro-service for analyzing team discussions, extracting themes, and offering collaboration insights.*
 
