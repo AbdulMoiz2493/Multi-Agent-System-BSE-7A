@@ -145,6 +145,7 @@ Respond with ONLY a JSON object in this EXACT format (no markdown, no backticks)
      * peer_collaboration_agent: REQUIRES "team_members" (list of team member names), "discussion_logs" (array of discussion messages)
      * exam_readiness_agent: REQUIRES "subject" (what subject to assess), "assessment_type" (quiz/exam/assignment), "difficulty" (easy/medium/hard), "question_count" (number of questions)
      * plagiarism_prevention_agent: REQUIRES text content
+     * lecture_insight_agent: REQUIRES "audio_url" (URL to lecture audio file) OR "audio_data" (base64 encoded audio)
      * gemini-wrapper: No required params
 
 3. **Low Confidence (< 0.5)**:

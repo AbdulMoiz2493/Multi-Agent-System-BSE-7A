@@ -266,13 +266,14 @@
     "id": "lecture_insight_agent",
     "name": "Lecture Audio Analyzer & Note Generator",
     "url": "http://lecture-insight-agent:5020",
-    "description": "ONLY use for ANALYZING lecture recordings, class audio, or generating notes from lectures. Processes: audio transcription, key insight extraction, lecture summaries. Use for: 'analyze lecture', 'lecture recording', 'lecture notes', 'class audio', NOT for general note-taking or text summarization.",
+    "description": "ONLY use for ANALYZING lecture recordings, class audio, or generating notes from lectures. Processes: audio transcription, key insight extraction, lecture summaries, finding related resources. REQUIRES audio URL or audio data. Use for: 'analyze lecture', 'lecture recording', 'lecture notes', 'class audio', 'transcribe lecture', NOT for general note-taking or text summarization.",
     "capabilities": [
       "audio-analysis",
       "lecture-transcription",
       "lecture-summarization",
       "note-generation",
-      "key-insight-extraction"
+      "key-insight-extraction",
+      "resource-discovery"
     ],
     "keywords": [
       "lecture",
@@ -283,9 +284,14 @@
       "lecture notes",
       "analyze lecture",
       "transcribe lecture",
-      "lecture summary"
+      "lecture summary",
+      "class audio",
+      "lecture audio"
     ],
-    "status": "offline"
+    "required_params": [
+      "audio_url"
+    ],
+    "status": "healthy"
   },
   {
     "id": "question_anticipator_agent",

@@ -50,9 +50,15 @@ app = FastAPI(
 )
 
 
-@app.get('/api/v1/health')
+@app.get('/health')
 async def health():
-    """Health check endpoint."""
+    """Health check endpoint - standard format for supervisor."""
+    return {"status": "healthy"}
+
+
+@app.get('/api/v1/health')
+async def health_detailed():
+    """Detailed health check endpoint."""
     return {
         "status": "healthy",
         "agent": "lecture-insight",
@@ -88,6 +94,10 @@ async def process_task(req: Request):
     Supervisor communication endpoint.
     Receives TaskEnvelope from supervisor, processes lecture audio, 
     returns CompletionReport with results.
+    
+    Supports two formats:
+    1. Structured format with audio_input object (for direct audio processing)
+    2. Simple format with request text (for general queries about lectures)
     """
     start_time = time.time()
     
@@ -101,9 +111,75 @@ async def process_task(req: Request):
     
     _logger.info(f"📥 Received task: {task_envelope.message_id}")
     
+    params = task_envelope.task.parameters or {}
+    
+    # Check for structured agent format (agent_name, intent, payload)
+    if "agent_name" in params and "payload" in params:
+        params = params.get("payload", {})
+    
+    # Check for 'data' wrapper
+    if "data" in params and isinstance(params.get("data"), dict):
+        params = params.get("data")
+    
+    # Try to extract audio_input from various locations
+    audio_input = params.get("audio_input")
+    
+    # If no audio_input, check if this is a URL-based request
+    if not audio_input:
+        audio_url = params.get("audio_url") or params.get("url")
+        audio_format = params.get("format", "mp3")
+        if audio_url:
+            audio_input = {
+                "type": "url",
+                "data": audio_url,
+                "format": audio_format
+            }
+    
+    # If still no audio_input, this might be a general query
+    if not audio_input:
+        user_request = params.get("request") or params.get("query") or ""
+        
+        # Return helpful message about what this agent does
+        return CompletionReport(
+            message_id=str(uuid.uuid4()),
+            sender="LectureInsightAgent",
+            recipient=task_envelope.sender,
+            related_message_id=task_envelope.message_id,
+            status="SUCCESS",
+            results={
+                "output": f"""## Lecture Insight Agent
+
+I can help you analyze lecture recordings and generate study materials! 
+
+**What I can do:**
+- 🎤 Transcribe lecture audio (MP3, WAV, M4A)
+- 📝 Generate comprehensive lecture summaries
+- 🔑 Extract key concepts and keywords
+- 📚 Find related educational resources (articles & videos)
+- 🎯 Identify learning gaps and prerequisites
+
+**To use me, please provide:**
+1. A URL to your lecture audio file, OR
+2. Base64-encoded audio data
+
+**Example request:**
+"Analyze this lecture: https://example.com/lecture.mp3"
+
+Your query: "{user_request}"
+
+Please provide a lecture audio URL or upload audio for me to analyze!""",
+                "requires_audio": True,
+                "supported_formats": ["mp3", "wav", "m4a"]
+            }
+        )
+    
     # Extract and validate input parameters
     try:
-        input_data = LectureInsightInput(**task_envelope.task.parameters)
+        input_data = LectureInsightInput(
+            audio_input=audio_input,
+            user_id=params.get("user_id") or params.get("student_id") or "default_user",
+            preferences=params.get("preferences", {})
+        )
     except Exception as e:
         _logger.error(f"Invalid task parameters: {e}")
         return CompletionReport(

@@ -370,6 +370,44 @@ def build_agent_payload(agent_id: str, user_request: str, intent_info: Dict[str,
             "request": request_message
         }
 
+    elif agent_id in ("lecture_insight_agent", "lecture-insight-agent", "lecture_insight"):
+        # lecture_insight expects audio_input with URL or base64 data
+        audio_url = extracted.get("audio_url") or extracted.get("url") or extracted.get("audio_link")
+        audio_data = extracted.get("audio_data") or extracted.get("base64_audio")
+        audio_format = extracted.get("format") or extracted.get("audio_format") or "mp3"
+        
+        # Determine audio input type
+        if audio_url:
+            audio_input = {
+                "type": "url",
+                "data": audio_url,
+                "format": audio_format
+            }
+        elif audio_data:
+            audio_input = {
+                "type": "base64",
+                "data": audio_data,
+                "format": audio_format
+            }
+        else:
+            # No audio provided - just forward the request
+            audio_input = None
+        
+        # Build preferences
+        preferences = {
+            "resource_limit": int(extracted.get("resource_limit") or 10),
+            "language": extracted.get("language") or "en",
+            "include_videos": extracted.get("include_videos", True),
+            "include_articles": extracted.get("include_articles", True)
+        }
+        
+        payload = {
+            "request": user_request,
+            "audio_input": audio_input,
+            "user_id": extracted.get("user_id") or extracted.get("student_id") or "default_user",
+            "preferences": preferences
+        }
+
     else:
         # Generic fallback: include extracted params under `params`
         if extracted:

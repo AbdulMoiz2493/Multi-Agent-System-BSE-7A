@@ -108,6 +108,7 @@ class GeminiChatOrchestrator:
             "gemini_wrapper_agent": [],  # No required params
             "peer_collaboration_agent": ["team_members", "discussion_logs"],
             "exam_readiness_agent": ["subject", "assessment_type", "difficulty", "question_count"],
+            "lecture_insight_agent": ["audio_url"],  # Requires audio URL or audio_data
         }
         return required_params.get(agent_id, [])
 
@@ -291,6 +292,15 @@ Now analyze the user's message and respond with ONLY the JSON object (no preambl
 - Example: "Track my daily study progress" or "I studied Math for 2 hours today"
 → Extracted: {subject: "Math", hours: 2}
 - Keywords: track study, daily revision, study habits, monitor progress, study reminders, track progress
+
+### Lecture Insight Agent
+- Required: audio_url (URL to lecture audio file) OR audio_data (base64 encoded audio)
+- Optional: user_id, format (mp3/wav/m4a), resource_limit, language, include_videos, include_articles
+- Example: "Analyze this lecture recording: https://example.com/lecture.mp3"
+→ Extracted: {audio_url: "https://example.com/lecture.mp3", format: "mp3"}
+- Example: "Transcribe and summarize my class audio"
+→ Ask for audio_url: "Please provide the URL to your lecture audio file (MP3, WAV, or M4A format)"
+- Keywords: lecture, recording, audio, lecture recording, class recording, lecture notes, analyze lecture, transcribe lecture, lecture summary
 """
         return definitions
 
@@ -600,6 +610,8 @@ Now analyze the user's message and respond with ONLY the JSON object (no preambl
             return self._format_for_peer_collaboration(base_payload, extracted_params)
         elif agent_id == "exam_readiness_agent":
             return self._format_for_exam_readiness(base_payload, extracted_params)
+        elif agent_id == "lecture_insight_agent":
+            return self._format_for_lecture_insight(base_payload, extracted_params)
         else:
             # Fallback: just include extracted params
             _logger.warning(f"Unknown agent {agent_id}, using generic format")
@@ -851,6 +863,50 @@ Now analyze the user's message and respond with ONLY the JSON object (no preambl
             "created_by": params.get("created_by") or "supervisor",
             "use_rag": params.get("use_rag", False),
             "export_pdf": params.get("export_pdf", False)
+        }
+
+    def _format_for_lecture_insight(self, payload: Dict, params: Dict) -> Dict:
+        """Format payload for Lecture Insight Agent."""
+        import uuid as _uuid
+        
+        # Get audio URL or data
+        audio_url = params.get("audio_url") or params.get("url") or params.get("audio_link")
+        audio_data = params.get("audio_data") or params.get("base64_audio")
+        audio_format = params.get("format") or params.get("audio_format") or "mp3"
+        
+        # Determine audio input type
+        if audio_url:
+            audio_input = {
+                "type": "url",
+                "data": audio_url,
+                "format": audio_format
+            }
+        elif audio_data:
+            audio_input = {
+                "type": "base64",
+                "data": audio_data,
+                "format": audio_format
+            }
+        else:
+            # No audio provided - return request for the agent to ask for it
+            return {
+                "request": payload.get("request", ""),
+                "audio_input": None,
+                "user_id": params.get("user_id") or params.get("student_id") or "default_user"
+            }
+        
+        # Build preferences
+        preferences = {
+            "resource_limit": int(params.get("resource_limit") or 10),
+            "language": params.get("language") or "en",
+            "include_videos": params.get("include_videos", True),
+            "include_articles": params.get("include_articles", True)
+        }
+        
+        return {
+            "audio_input": audio_input,
+            "user_id": params.get("user_id") or params.get("student_id") or "default_user",
+            "preferences": preferences
         }
 
     def reset_conversation(self):
