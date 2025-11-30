@@ -1,40 +1,47 @@
-bcrypt>=4.0.1
-passlib[bcrypt]==1.7.4
-chromadb>=0.5.0
+# Supervisor-only dependencies
+# This file is ONLY used by the supervisor service
+# Each agent has its own requirements.txt in its folder
+
+# Core web framework
 fastapi
 uvicorn
 pydantic
+<<<<<<< HEAD
+=======
 python-jose[cryptography]
+passlib[bcrypt]==1.7.4
+bcrypt==3.2.0
 pyjwt
 httpx
 PyYAML
 pytest
-pytest-asyncio
 requests
 aiosqlite
 google-generativeai
-<<<<<<< HEAD
 python-dotenv
-langchain-core
-langchain-groq
+langgraph>=0.2.0
+assemblyai>=0.17.0
+tavily-python>=0.3.0
+google-api-python-client>=2.0.0
+>>>>>>> lecture_insight_agent/lecture-insight-agent
 
-langchain
-langchain-community
-langchain-huggingface
-faiss-cpu
-sentence-transformers
-pypdf
-unstructured
-reportlab
+# HTTP client for agent communication
+httpx
+
+# Authentication
+python-jose[cryptography]
+pyjwt
+bcrypt>=4.0.1
+passlib[bcrypt]==1.7.4
+
+# Configuration
+PyYAML
+python-dotenv
+
+# Gemini API for orchestration
+google-generativeai
+
+# Testing (optional, can be removed in production)
+pytest
+pytest-asyncio
 requests
-python-multipart
-
-# Use CPU-only torch to avoid huge CUDA downloads (~1.5GB savings)
---extra-index-url https://download.pytorch.org/whl/cpu
-torch
-=======
-dotenv
-langgraph>=0.0.20
-langchain-core>=0.1.0
-numpy>=2.0.0
->>>>>>> assignment_coach_agent/main

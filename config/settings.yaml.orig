@@ -9,11 +9,14 @@ supervisor:
 gemini_wrapper:
   host: 127.0.0.1
   port: 5010
-  mode: "auto"  # auto -> cloud if env present else mock
+<<<<<<< HEAD
+  mode: "auto" # auto -> cloud if env present else mock
+=======
+  mode: "cloud"  # auto -> cloud if env present else mock
+>>>>>>> lecture_insight_agent/lecture-insight-agent
   external_api_url: "${GEMINI_API_URL}"
   api_key_env: "GEMINI_API_KEY"
 
-<<<<<<< HEAD
 adaptive_quiz_master:
   host: 127.0.0.1
   port: 5020
@@ -31,9 +34,24 @@ presentation_feedback:
   ltm_db_path: "./agents/presentation_feedback_agent/ltm_cache.db"
   model_name: "gemini-2.5-flash"
 
-=======
 peer_collaboration:
   host: 127.0.0.1
   port: 5011
   mode: "local"  # no external API needed
->>>>>>> peer_collaboration_agent/peer_collaboration_agent
+
+exam_readiness_agent:
+  host: 127.0.0.1
+  port: 5024
+  mode: "auto" # auto -> cloud if GEMINI_API_KEY present else mock
+  api_key_env: "GEMINI_API_KEY"
+  default_model: "gemini-2.5-flash"
+  max_tokens: 8000
+  # RAG settings
+  rag_chunk_size: 500
+  rag_chunk_overlap: 100
+  rag_top_k: 6
+  rag_max_chars: 4000
+  # Question generation defaults
+  default_assessment_type: "quiz"
+  default_difficulty: "medium"
+  allow_latex: true
