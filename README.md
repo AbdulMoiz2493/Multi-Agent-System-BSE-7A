@@ -18,12 +18,21 @@ This repository contains the backend for a multi-agent system, featuring a Super
 │   ├── routing.py            # Request routing logic
 │   ├── worker_client.py      # Client for communicating with workers
 │   └── tests/                # Tests for the supervisor
-├── gemini_wrapper/           # Gemini-wrapper worker agent
-│   ├── __init__.py
-│   ├── app.py                # Main FastAPI app for the worker
-│   ├── client.py             # Logic for calling Gemini API or mock
-│   ├── ltm.py                # Long-term memory (SQLite)
-│   └── tests/                # Tests for the gemini wrapper
+├── agents/
+│   ├── gemini_wrapper/       # Gemini-wrapper worker agent
+│   │   ├── __init__.py
+│   │   ├── app.py            # Main FastAPI app for the worker
+│   │   ├── client.py         # Logic for calling Gemini API or mock
+│   │   ├── ltm.py            # Long-term memory (SQLite)
+│   │   └── tests/            # Tests for the gemini wrapper
+│   └── peer_collaboration/   # Peer Collaboration agent
+│       ├── __init__.py
+│       ├── app.py            # Main FastAPI app for the agent
+│       ├── analysis.py       # Discussion analysis logic
+│       ├── models.py         # Data models
+│       ├── routing.py        # API routing
+│       ├── suggestions.py    # Suggestion generation
+│       └── tests/            # Tests for peer collaboration
 ├── shared/
 │   └── models.py             # Pydantic models shared across services
 ├── tests/
@@ -49,21 +58,33 @@ pip install -r requirements.txt
 
 ### 2. Running the Services
 
-You need to run both the Supervisor and the Gemini Wrapper in separate terminals.
+You need to run the Supervisor and all worker agents in separate terminals. Make sure you have installed `textblob`:
+
+```bash
+source venv/bin/activate
+pip install textblob
+```
 
 **Terminal 1: Run the Supervisor**
 ```bash
-chmod +x run_supervisor.sh
-./run_supervisor.sh
+source venv/bin/activate
+uvicorn supervisor.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 The Supervisor will be available at `http://127.0.0.1:8000`.
 
-**Terminal 2: Run the Gemini Wrapper**
+**Terminal 2: Run the Gemini Wrapper Agent**
 ```bash
-chmod +x run_gemini.sh
-./run_gemini.sh
+source venv/bin/activate
+uvicorn agents.gemini_wrapper.app:app --host 0.0.0.0 --port 5010 --reload
 ```
 The Gemini Wrapper will be available at `http://127.0.0.1:5010`. By default, it runs in `mock` mode.
+
+**Terminal 3: Run the Peer Collaboration Agent**
+```bash
+source venv/bin/activate
+uvicorn agents.peer_collaboration.app:app --host 0.0.0.0 --port 5020 --reload
+```
+The Peer Collaboration Agent will be available at `http://127.0.0.1:5020`. This agent analyzes team discussions, sentiment, participation, and provides engagement insights.
 
 ## Gemini Wrapper Modes
 
@@ -74,6 +95,22 @@ The `gemini-wrapper` can run in two modes, configured in `config/settings.yaml`.
     1.  Set `mode: "cloud"` or `mode: "auto"` in `config/settings.yaml`.
     2.  Create a `.env` file by copying `.env.example`.
     3.  Fill in your `GEMINI_API_URL` and `GEMINI_API_KEY` in the `.env` file.
+
+## Peer Collaboration Agent
+
+The **Peer Collaboration Agent** analyzes team discussions and provides insights on:
+
+*   **Participation Analysis:** Identifies active and inactive team members based on message counts
+*   **Sentiment Analysis:** Uses TextBlob to analyze the overall tone of discussions (positive, negative, or neutral)
+*   **Topic Extraction:** Identifies dominant topics and keywords from discussion logs
+*   **Engagement Scoring:** Computes engagement scores based on participation and sentiment
+*   **Suggestions:** Provides recommendations for improving team collaboration
+
+**Features:**
+- Analyzes discussion logs from team meetings or chat conversations
+- Provides actionable insights for team leads and managers
+- Helps identify communication gaps and engagement issues
+- Runs on port 5020 by default
 
 ## Running Tests
 
