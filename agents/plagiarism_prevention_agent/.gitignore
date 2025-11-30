@@ -36,7 +36,6 @@ wheels/
 
 # Models cache
 .cache/
-models/
 *.bin
 *.pt
 *.pth
